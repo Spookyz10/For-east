@@ -18,10 +18,7 @@ local args = {
 
 game:GetService("ReplicatedStorage"):WaitForChild("useSpell"):FireServer(unpack(args))
 wait()
-end
 
-_G.look = true
-while _G.look == true do
 local function Move(MobPos)
     local character = game:GetService("Players").LocalPlayer.Character
     local direction = (MobPos - character.Head.Position).Unit
