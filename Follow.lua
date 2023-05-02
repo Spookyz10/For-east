@@ -4,7 +4,7 @@ local OldNameCall; OldNameCall = hookmetamethod(game, "__namecall", function(sel
 end)
 
 while wait(0.3) do
-game:GetService'Players'.LocalPlayer.Character:MoveTo(workspace.eastonmar.HumanoidRootPart.Position)
+game:GetService'Players'.LocalPlayer.Character:MoveTo(workspace.Ostricch.HumanoidRootPart.Position)
 
 local args = {
     [1] = "Q"
