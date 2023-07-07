@@ -1,19 +1,18 @@
-_G.look = true
-while _G.look == true do
-local function Move(MobPos)
-    local character = game:GetService("Players").LocalPlayer.Character
-    local direction = (MobPos - character.Head.Position).Unit
-    character.HumanoidRootPart.CFrame = CFrame.new(character.HumanoidRootPart.Position, character.HumanoidRootPart.Position + direction)
-end
-
-local mobs = game:GetService("Workspace"):FindFirstChild("Enemies")
-
-for i,mob in pairs(mobs:GetChildren()) do
-    if mob.Name ~= "remainingEnemies" then
-        if mob:FindFirstChild("HumanoidRootPart") and mob:FindFirstChildOfClass("Humanoid") then
-repeat Move(mob.HumanoidRootPart.Position) wait(0.01) until mob == nil
-        end
+local localPlayer,remote,arg1 = game:GetService("Players").LocalPlayer,game:GetService("ReplicatedStorage"):WaitForChild("ClientServerNetwork",3):WaitForChild("MagicNetwork",3),"Swing"
+local mobs = workspace:WaitForChild("Game",3):WaitForChild("Mobs",3)
+local function damageTick()
+    local character = localPlayer.Character or localPlayer.CharacterAdded:Wait()
+    local mob = mobs:FindFirstChildOfClass("Model")
+    if not mob then
+        return
     end
+    local rootPart,targetPart = character.PrimaryPart,mob:FindFirstChildWhichIsA("BasePart")
+    if not (rootPart and targetPart) then
+        return
+    end
+    rootPart.CFrame = targetPart.CFrame*CFrame.new(0,3,6)
+    remote:FireServer(arg1,targetPart.Position)
 end
-wait(1)
+while game:GetService("RunService").RenderStepped:Wait() do
+    damageTick()
 end
