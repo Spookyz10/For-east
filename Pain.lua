@@ -1,9 +1,3 @@
-repeat wait() until (#game:GetService("Workspace"):WaitForChild('Mobs'):GetChildren()) > 0
-if workspace.Mobs:FindFirstChild("Queen's Egg") then
-    repeat wait() until workspace.Mobs:FindFirstChild('Hive Guard') -- wanna kill the guards before it goes to the queen egg in hive raid
-end
-
-abort = false
 -- detect if outdated script
 globalversion = loadstring(game:HttpGet('https://raw.githubusercontent.com/laderite/zenx/main/version.lua'))()
 local promptOverlay = game.CoreGui:FindFirstChild("RobloxPromptGui"):FindFirstChild("promptOverlay")
