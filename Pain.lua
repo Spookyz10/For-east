@@ -1,3 +1,8 @@
+function invitePlayer(plr)
+    local args = {[1] = "Invite",[2] = game:GetService("Players")[plr]}
+    game:GetService("ReplicatedStorage").Events.partyEvent:FireServer(unpack(args))
+end
+
 if getgenv().settings['autojoin']['enabled'] then
     local userFound
     for _,v in pairs(game.Players:GetPlayers()) do
