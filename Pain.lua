@@ -1,3 +1,208 @@
+repeat wait() until (#game:GetService("Workspace"):WaitForChild('Mobs'):GetChildren()) > 0
+if workspace.Mobs:FindFirstChild("Queen's Egg") then
+    repeat wait() until workspace.Mobs:FindFirstChild('Hive Guard') -- wanna kill the guards before it goes to the queen egg in hive raid
+end
+
+abort = false
+-- detect if outdated script
+globalversion = loadstring(game:HttpGet('https://raw.githubusercontent.com/laderite/zenx/main/version.lua'))()
+local promptOverlay = game.CoreGui:FindFirstChild("RobloxPromptGui"):FindFirstChild("promptOverlay")
+promptOverlay.DescendantAdded:Connect(function(Err)
+    if Err.Name == "ErrorTitle" and getgenv().settings['autoreconnect'] then
+        if string.find(Err.Text, "Disconnected") or string.find(Err.Text, "Teleport Failed") then
+            game.Players.LocalPlayer:Kick("\nRejoining...")
+            wait()
+            game:GetService("TeleportService"):Teleport("2990100290", game.Players.LocalPlayer)
+        end
+    end
+end)
+
+local function load(package)
+    loadstring(game:HttpGet('https://raw.githubusercontent.com/laderite/zenx/main/packages/' .. tostring(package) .. '.lua'))()
+end
+
+--// load packages \\--
+load('mod')
+load('log')
+load('commands')
+
+function detectOutdatedScript()
+    if not getgenv().settings or not getgenv().settings['version'] then
+        return true
+    end
+    if getgenv().settings['version'] ~= globalversion then
+        return true
+    end
+    return false
+end
+
+
+function getTypeOfServer()
+    if workspace:FindFirstChild('BossSETTINGS') then
+        return "Raid"
+    else
+        if workspace:FindFirstChild('W1') or workspace:FindFirstChild('World2') then
+            return "Lobby"
+        end
+    end
+end
+
+
+function getTableSize(table)
+    local count = 0
+    for _,v in pairs(table) do
+        count = count + 1
+    end
+    return count
+end
+
+function getRandomButtonResponse()
+    local s = {"ok i go now ty","ight thanks sexy man","alright bro thanks :))))","ty baby girl","Ok UwU","omg outdated script?!?! ok i go get new script cuz im pro :D"}
+    return tostring(s[math.random(1,getTableSize(s))])
+end
+
+if detectOutdatedScript() then
+    local prompt = loadstring(game:HttpGet('https://raw.githubusercontent.com/laderite/zenx/main/prompt.lua', true))()
+    prompt.createPrompt("OUTDATED SCRIPT", "Hi, you're using an outdated script. Go join the discord or head over to the v3rm thread to get the updated script.", getRandomButtonResponse(), true, function(close)
+        close()
+    end)
+end
+
+function invitePlayer(plr)
+    local args = {[1] = "Invite",[2] = game:GetService("Players")[plr]}
+    game:GetService("ReplicatedStorage").Events.partyEvent:FireServer(unpack(args))
+end
+
+if getgenv().settings['autojoin']['enabled'] then
+    local userFound
+    for _,v in pairs(game.Players:GetPlayers()) do
+        if v.Name == getgenv().settings['autojoin']['usertojoin'] then
+            userFound = v.Name
+        end
+    end
+    if not userFound then
+        while wait(1) do
+            local args = {[1] = getgenv().settings['autojoin']['usertojoin'],[2] = "Teleport"}
+            game:GetService("ReplicatedStorage").Events.teleport:InvokeServer(unpack(args))
+        end
+    end
+end
+function everyoneIsIn()
+    wait()
+    plrtable = {}
+    for _,v in pairs(getgenv().settings['waitforjoiners']['joiners']) do
+        if game:GetService("Players").LocalPlayer.PlayerGui.Partylist.Frame:FindFirstChild(v) then
+            table.insert(plrtable, v)
+        end
+    end
+    if getTableSize(plrtable) == getTableSize(getgenv().settings['waitforjoiners']['joiners']) then
+        plrtable = {}
+        return true
+    end
+    plrtable = {}
+    return false
+end
+
+function waitForJoiners()
+    if getTypeOfServer() == "Lobby" then
+        if getgenv().settings['waitforjoiners']['host'] == game.Players.LocalPlayer.Name then
+            repeat
+                wait()
+                for _,v in pairs(getgenv().settings['waitforjoiners']['joiners']) do
+                    if game.Players:FindFirstChild(v) then
+                        invitePlayer(v)
+                        local playerJoined = game:GetService("Players").LocalPlayer.PlayerGui.Partylist.Frame:WaitForChild(v)
+                        wait(0.2)
+                    end
+                end
+            until everyoneIsIn()
+        end
+    end
+end
+
+
+local VirtualInputManager = game:GetService('VirtualInputManager')
+VirtualInputManager:SendKeyEvent(true, "U", false, game) -- get rid of the 'click any button' screen
+task.wait()
+VirtualInputManager:SendKeyEvent(false, "U", false, game)
+
+coroutine.resume(coroutine.create(function()
+    thetime = getgenv().settings['leavetimer']
+    while task.wait() do
+        if thetime == 0 and getTypeOfServer() == "Raid" then
+            print'Leave timer reached, leaving.'
+            local args = {[1] = "home"}
+            game:GetService("ReplicatedStorage").MapSelection:FireServer(unpack(args))
+            wait(3)
+            game.Players.LocalPlayer:Kick("\nRejoining...")
+            wait()
+            game:GetService("TeleportService"):Teleport("2990100290", game.Players.LocalPlayer)
+        else
+            thetime = thetime - 1
+        end
+        task.wait(1)
+    end
+end))
+
+if getgenv().settings['waitforjoiners']['enabled'] then
+    waitForJoiners()
+end
+
+if getTypeOfServer() == "Lobby" then
+    if table.find(getgenv().settings['waitforjoiners']['joiners'], game.Players.LocalPlayer.Name) then
+        while wait() do
+            for _,v in pairs(game:GetService("Players").LocalPlayer.PlayerGui.RaidsGUI:GetChildren()) do
+                if v.Name == "Invite" then
+                    if v.TextLabel.Text ~= "ZephsyJ" and string.find(v.TextLabel.Text, getgenv().settings['waitforjoiners']['host']) then
+                        local button = v:WaitForChild("YES")
+                        for i,v in pairs(getconnections(button.MouseButton1Click)) do
+                            v:Fire()
+                        end
+                    end
+                end
+            end
+        end
+    end
+end
+
+coroutine.resume(coroutine.create(function()
+    if getgenv().settings['waitforjoiners']['enabled'] then
+        if getTypeOfServer() == "Raid" then
+        local d = game.Players:WaitForChild(getgenv().settings['waitforjoiners']['host'], 20)
+            if not d then
+                local args = {[1] = "home"}
+                game:GetService("ReplicatedStorage").MapSelection:FireServer(unpack(args))
+                wait(3)
+                game.Players.LocalPlayer:Kick("\nRejoining...")
+                wait()
+                game:GetService("TeleportService"):Teleport("2990100290", game.Players.LocalPlayer)
+            end
+        end
+    end
+end))
+
+coroutine.resume(coroutine.create(function(v)
+    while wait(1) do
+        if getgenv().settings['autojoinraid']['enabled'] then
+            if workspace:FindFirstChild('W1') or workspace:FindFirstChild('QuestNPCs') then
+                if getgenv().settings['waitforjoiners']['enabled'] then
+                    if not table.find(getgenv().settings['waitforjoiners']['joiners'], game.Players.LocalPlayer.Name) then
+                        local dungeon = getgenv().settings['autojoinraid']['dungeon']
+                        local hardcore = getgenv().settings['autojoinraid']['hardcore']
+                        local args = {[1] = "Raid", [2] = dungeon, [3] = hardcore}
+                        game:GetService("ReplicatedStorage").Events.raidEvent:FireServer(unpack(args))
+                    end
+                else
+                    local dungeon = getgenv().settings['autojoinraid']['dungeon']
+                    local hardcore = getgenv().settings['autojoinraid']['hardcore']
+                    local args = {[1] = "Raid", [2] = dungeon, [3] = hardcore}
+                    game:GetService("ReplicatedStorage").Events.raidEvent:FireServer(unpack(args))
+                end
+            end
+        end
+    end
+end))
+
 function swingdasword()
     local args = {[1] = "Slash"}
     game:GetService("ReplicatedStorage").Events.attack:FireServer(unpack(args))
