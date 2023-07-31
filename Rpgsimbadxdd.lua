@@ -1,7 +1,21 @@
-repeat wait() until (game:GetService("Workspace"):WaitForChild('Mobs'):GetChildren()) > 0
+repeat wait() until (#game:GetService("Workspace"):WaitForChild('Mobs'):GetChildren()) > 0
 if workspace.Mobs:FindFirstChild("Queen's Egg") then
     repeat wait() until workspace.Mobs:FindFirstChild('Hive Guard') -- wanna kill the guards before it goes to the queen egg in hive raid
 end
+
+abort = false
+-- detect if outdated script
+globalversion = loadstring(game:HttpGet('https://raw.githubusercontent.com/laderite/zenx/main/version.lua'))()
+local promptOverlay = game.CoreGui:FindFirstChild("RobloxPromptGui"):FindFirstChild("promptOverlay")
+promptOverlay.DescendantAdded:Connect(function(Err)
+    if Err.Name == "ErrorTitle" and getgenv().settings['autoreconnect'] then
+        if string.find(Err.Text, "Disconnected") or string.find(Err.Text, "Teleport Failed") then
+            game.Players.LocalPlayer:Kick("\nRejoining...")
+            wait()
+            game:GetService("TeleportService"):Teleport("2990100290", game.Players.LocalPlayer)
+        end
+    end
+end)
 
 local function load(package)
     loadstring(game:HttpGet('https://raw.githubusercontent.com/laderite/zenx/main/packages/' .. tostring(package) .. '.lua'))()
@@ -307,7 +321,7 @@ function farmraid()
         local mob, x, y, z, type = gettarget()
 
         if mob then
-            if mob.Name == "Turret" then -- we dont wanna target useless stuff right
+            if mob.Name == "Winter Beast" then -- we dont wanna target useless stuff right
                 game.Players.LocalPlayer.Character:WaitForChild('HumanoidRootPart').CFrame = CFrame.new(167.53504943847656, 222.5566864013672, -3045.381591796875)
                 task.wait()
                 farmraid()
