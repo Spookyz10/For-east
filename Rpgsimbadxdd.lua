@@ -4,6 +4,57 @@ if workspace.Mobs:FindFirstChild("Queen's Egg") then
     repeat wait() until workspace.Mobs:FindFirstChild('Hive Guard') -- wanna kill the guards before it goes to the queen egg in hive raid
 end
 
+local function load(package)
+    loadstring(game:HttpGet('https://raw.githubusercontent.com/laderite/zenx/main/packages/' .. tostring(package) .. '.lua'))()
+end
+
+--// load packages \\--
+load('mod')
+load('log')
+load('commands')
+
+function detectOutdatedScript()
+    if not getgenv().settings or not getgenv().settings['version'] then
+        return true
+    end
+    if getgenv().settings['version'] ~= globalversion then
+        return true
+    end
+    return false
+end
+
+
+function getTypeOfServer()
+    if workspace:FindFirstChild('BossSETTINGS') then
+        return "Raid"
+    else
+        if workspace:FindFirstChild('W1') or workspace:FindFirstChild('World2') then
+            return "Lobby"
+        end
+    end
+end
+
+
+function getTableSize(table)
+    local count = 0
+    for _,v in pairs(table) do
+        count = count + 1
+    end
+    return count
+end
+
+function getRandomButtonResponse()
+    local s = {"ok i go now ty","ight thanks sexy man","alright bro thanks :))))","ty baby girl","Ok UwU","omg outdated script?!?! ok i go get new script cuz im pro :D"}
+    return tostring(s[math.random(1,getTableSize(s))])
+end
+
+if detectOutdatedScript() then
+    local prompt = loadstring(game:HttpGet('https://raw.githubusercontent.com/laderite/zenx/main/prompt.lua', true))()
+    prompt.createPrompt("OUTDATED SCRIPT", "Hi, you're using an outdated script. Go join the discord or head over to the v3rm thread to get the updated script.", getRandomButtonResponse(), true, function(close)
+        close()
+    end)
+end
+
 function invitePlayer(plr)
     local args = {[1] = "Invite",[2] = game:GetService("Players")[plr]}
     game:GetService("ReplicatedStorage").Events.partyEvent:FireServer(unpack(args))
@@ -257,7 +308,7 @@ function farmraid()
         local mob, x, y, z, type = gettarget()
 
         if mob then
-            if mob.Name == "Winter Beast" then -- we dont wanna target useless stuff right
+            if mob.Name == "Turret" then -- we dont wanna target useless stuff right
                 game.Players.LocalPlayer.Character:WaitForChild('HumanoidRootPart').CFrame = CFrame.new(167.53504943847656, 222.5566864013672, -3045.381591796875)
                 task.wait()
                 farmraid()
@@ -592,4 +643,4 @@ if getTypeOfServer() == "Raid" then
             game:GetService("TeleportService"):Teleport("2990100290", game.Players.LocalPlayer)
         end
     end
-endendijn
+end
