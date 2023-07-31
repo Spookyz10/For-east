@@ -1,4 +1,3 @@
-repeat wait() until game:IsLoaded()
 repeat wait() until game:GetService("Players").LocalPlayer:WaitForChild('Loaded').Value == true
 repeat wait() until (#game:GetService("Workspace"):WaitForChild('Mobs'):GetChildren()) > 0
 if workspace.Mobs:FindFirstChild("Queen's Egg") then
