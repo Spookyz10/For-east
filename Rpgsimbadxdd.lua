@@ -1,3 +1,4 @@
+wait(5)
 repeat wait() until (#game:GetService("Workspace"):WaitForChild('Mobs'):GetChildren()) > 0
 if workspace.Mobs:FindFirstChild("Queen's Egg") then
     repeat wait() until workspace.Mobs:FindFirstChild('Hive Guard') -- wanna kill the guards before it goes to the queen egg in hive raid
@@ -54,6 +55,12 @@ function waitForJoiners()
         end
     end
 end
+
+
+local VirtualInputManager = game:GetService('VirtualInputManager')
+VirtualInputManager:SendKeyEvent(true, "U", false, game) -- get rid of the 'click any button' screen
+task.wait()
+VirtualInputManager:SendKeyEvent(false, "U", false, game)
 
 coroutine.resume(coroutine.create(function()
     thetime = getgenv().settings['leavetimer']
@@ -150,6 +157,26 @@ function lookAt(chr,target) -- found this func somewhere
     end
 end
 
+pcall(function()
+function sell()
+    if getgenv().settings['autosell']['enabled'] then
+        for _,v in pairs(game:GetService("Players").LocalPlayer.PlayerGui.Inventory.Frame.ScrollingFrame:GetChildren()) do
+            if v:IsA('TextButton') and v:FindFirstChild('ItemName').Value ~= "" then
+                local name = v.ItemName.Value
+                local ID = v.ID.Value
+                
+                if table.find(getgenv().settings['autosell']['items'], name) then
+                    
+                    local args = {[1] = "Sell",[2] = {[1] = {[1] = ID}}}
+                    game:GetService("ReplicatedStorage").Events.inventory:FireServer(unpack(args))
+                end
+            end
+        end
+    end
+end
+end)
+
+sell()
         
 function gettarget()
     local target = game:GetService("Workspace"):WaitForChild('Mobs'):FindFirstChild('Crystal') or game:GetService("Workspace"):WaitForChild('Mobs'):FindFirstChild('Stand')
@@ -230,7 +257,7 @@ function farmraid()
         local mob, x, y, z, type = gettarget()
 
         if mob then
-            if mob.Name == "Turret" then -- we dont wanna target useless stuff right
+            if mob.Name == "Winter Beast" then -- we dont wanna target useless stuff right
                 game.Players.LocalPlayer.Character:WaitForChild('HumanoidRootPart').CFrame = CFrame.new(167.53504943847656, 222.5566864013672, -3045.381591796875)
                 task.wait()
                 farmraid()
@@ -565,4 +592,4 @@ if getTypeOfServer() == "Raid" then
             game:GetService("TeleportService"):Teleport("2990100290", game.Players.LocalPlayer)
         end
     end
-end
+endendijn
