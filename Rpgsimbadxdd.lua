@@ -41,13 +41,6 @@ function getRandomButtonResponse()
     return tostring(s[math.random(1,getTableSize(s))])
 end
 
-if detectOutdatedScript() then
-    local prompt = loadstring(game:HttpGet('https://raw.githubusercontent.com/laderite/zenx/main/prompt.lua', true))()
-    prompt.createPrompt("OUTDATED SCRIPT", "Hi, you're using an outdated script. Go join the discord or head over to the v3rm thread to get the updated script.", getRandomButtonResponse(), true, function(close)
-        close()
-    end)
-end
-
 function invitePlayer(plr)
     local args = {[1] = "Invite",[2] = game:GetService("Players")[plr]}
     game:GetService("ReplicatedStorage").Events.partyEvent:FireServer(unpack(args))
