@@ -17,26 +17,6 @@ promptOverlay.DescendantAdded:Connect(function(Err)
     end
 end)
 
-local function load(package)
-    loadstring(game:HttpGet('https://raw.githubusercontent.com/laderite/zenx/main/packages/' .. tostring(package) .. '.lua'))()
-end
-
---// load packages \\--
-load('mod')
-load('log')
-load('commands')
-
-function detectOutdatedScript()
-    if not getgenv().settings or not getgenv().settings['version'] then
-        return true
-    end
-    if getgenv().settings['version'] ~= globalversion then
-        return true
-    end
-    return false
-end
-
-
 function getTypeOfServer()
     if workspace:FindFirstChild('BossSETTINGS') then
         return "Raid"
