@@ -7,15 +7,6 @@ function swingdasword()
     game:GetService("ReplicatedStorage").Events.attack:FireServer(unpack(args))
 end
 
-function lookAt(chr,target) -- found this func somewhere
-    if chr.PrimaryPart then 
-        local chrPos=chr.PrimaryPart.Position 
-        local tPos=target.Position 
-        local newCF=CFrame.new(chrPos,tPos) 
-        chr:SetPrimaryPartCFrame(newCF)
-    end
-end
-
 function gettarget()
     local target = game:GetService("Workspace"):WaitForChild('Mobs'):FindFirstChild('Crystal') or game:GetService("Workspace"):WaitForChild('Mobs'):FindFirstChild('Stand')
     if not target then
